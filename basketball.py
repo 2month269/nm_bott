@@ -183,7 +183,7 @@ async def send_basket_help(message: Message):
 
 
 @router.message(Command("basketball"))
-@router.message(F.text.lower().startswith(("баскетбол", "баск", "/basketball", "/basket")))
+@router.message(F.text.lower().startswith(("баскетбол", "баск", "/basketball", "/basket", "бс")))
 async def basket_command(message: Message, state: FSMContext):
     """Основной обработчик текстовых команд"""
     await state.clear()

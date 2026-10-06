@@ -2007,6 +2007,7 @@ async def main():
     
     dp.include_router(router)
     routers_list = [
+        exchange_router,
         donate_router,
         star_router,
         mines_router, crash_router, dice_router, darts_router, profile_router, 

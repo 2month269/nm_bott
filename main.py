@@ -1655,8 +1655,8 @@ async def pyramid_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
     user = db.get_user(callback.from_user.id)
     text = (
-        "🔺 <b>Игра ПИРАМИДА (Pyramid)</b> 🔺\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "🔺 <b>Игра ПИРАМИДА</b> 🔺\n"
+        "ㅤ\n\n"
         "Поднимайтесь по 12 уровням от развалюхи до священной вершины!\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
         "<code>пирамида &lt;ставка&gt;</code> или <code>/pyramid &lt;ставка&gt;</code>\n"
@@ -1670,8 +1670,8 @@ async def diamond_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
     user = db.get_user(callback.from_user.id)
     text = (
-        "💎 <b>Игра АЛМАЗЫ (Diamonds)</b> 💎\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "💎 <b>Игра АЛМАЗЫ</b> 💎\n"
+        "ㅤ\n\n"
         "Открывайте по одной ячейке на каждом из 16 уровней и находите алмазы!\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
         "<code>алмазы &lt;ставка&gt;</code> или <code>/diamond &lt;ставка&gt;</code>\n"
@@ -1688,8 +1688,8 @@ async def mine_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
     user = db.get_user(callback.from_user.id)
     text = (
-        "💣 <b>Игра МИНЫ (Mines)</b> 💣\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "💣 <b>Игра МИНЫ</b> 💣\n"
+        "ㅤ\n\n"
         "Находите драгоценные алмазы 💎 и избегайте скрытых мин 💣!\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
         "<code>мины &lt;ставка&gt; &lt;кол-во мин&gt;</code>\n"
@@ -1703,8 +1703,8 @@ async def stairs_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
     user = db.get_user(callback.from_user.id)
     text = (
-        "🪜 <b>Игра ЛЕСЕНКА (Stairs)</b> 🪜\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "🪜 <b>Игра ЛЕСЕНКА</b> 🪜\n"
+        "ㅤ\n\n"
         "Пройдите 5 ступеней и заберите до <b>x12.50</b> от ставки!\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
         "<code>лесенка</code> или используйте команду <code>/stairs</code>\n\n"
@@ -1754,8 +1754,8 @@ async def heist_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
     user = db.get_user(callback.from_user.id)
     text = (
-        "🕵️‍♂️ <b>Игра ОГРАБЛЕНИЕ БАНКА (Bank Heist)</b> 🕵️‍♂️\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "🕵️‍♂️ <b>Игра ОГРАБЛЕНИЕ БАНКА</b> 🕵️‍♂️\n"
+        "ㅤ\n\n"
         "Взломайте 3 уровня защиты хранилища и заберите куш до <b>x160.00</b>!\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
         "<code>ограбление &lt;ставка&gt;</code> или используйте команду <code>/heist &lt;ставка&gt;</code>\n"
@@ -1820,8 +1820,8 @@ async def artifact_menu_inline_callback(callback: CallbackQuery):
     user = db.get_user(callback.from_user.id)
     user_nmp = user.get("nmp_balance", 0)
     text = (
-        "🏺 <b>Поход за Древним Артефактом (Artifact)</b> 🏺\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "🏺 <b>Поход за Древним Артефактом</b> 🏺\n"
+        "ㅤ\n\n"
         "Сразитесь с 3 стражами гробницы подряд и заберите куш <b>x13.00 NMP</b>!\n\n"
         "⚠️ <b>Награда достаётся только тем, кто одолеет всех 3 боссов до конца!</b>\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
@@ -1888,7 +1888,7 @@ async def sharik_menu_inline_callback(callback: CallbackQuery):
     user = db.get_user(callback.from_user.id)
     text = (
         "🔮 <b>Игра ШАРИК</b> 🔮\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "ㅤ\n\n"
         "Угадайте, окажется ли шарик под стаканом!\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
         "<code>шарик &lt;ставка&gt; будет</code> или <code>шарик &lt;ставка&gt; не будет</code>\n"
@@ -1903,7 +1903,7 @@ async def hypercar_menu_inline_callback(callback: CallbackQuery):
     user = db.get_user(callback.from_user.id)
     text = (
         "🏎 <b>Игра ГИПЕРКАР</b> 🏎\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "ㅤ\n\n"
         "Ваша задача — проехать как можно дальше, вовремя нажав на СТОП!\n"
         "⚠️ Остерегайтесь аварий, шанс которых увеличивается с износом машины.\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
@@ -1919,7 +1919,7 @@ async def smart_menu_inline_callback(callback: CallbackQuery):
     user = db.get_user(callback.from_user.id)
     text = (
         "📺 <b>Игра ВСЕЗНАЙКА</b> 📺\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "ㅤ\n\n"
         "Соедините правильный провод на 5 усложняющихся уровнях!\n\n"
         "📈 <b>Рост множителя:</b> от <code>x1.50</code> до <code>x150.00</code>!\n"
         "⚠️ <b>Остановка:</b> доступна строго ПОСЛЕ 2 уровня!\n\n"
@@ -1936,7 +1936,7 @@ async def duel_menu_inline_callback(callback: CallbackQuery):
     user = db.get_user(callback.from_user.id)
     text = (
         "⚔️ <b>P2P КИБЕР-ДУЭЛИ</b> ⚔️\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "ㅤ\n\n"
         "Сражайтесь с другими игроками в реальном времени!\n\n"
         "🎮 <b>Режимы:</b> \n"
         "• 🪨✂️📄 <b>Камень, Ножницы, Бумага</b>\n"
@@ -1954,7 +1954,7 @@ async def gold_menu_inline_callback(callback: CallbackQuery):
     user = db.get_user(callback.from_user.id)
     text = (
         "🌼 <b>Игра ЗОЛОТО</b> 🌼\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "ㅤ\n\n"
         "Пройдите 12 ступеней и заберите куш до <b>4096x</b>!\n\n"
         "✍️ <b>Для запуска игры напишите в чат:</b> \n"
         "<code>золото &lt;ставка&gt;</code> или <code>/gold &lt;ставка&gt;</code>\n"
@@ -1969,7 +1969,7 @@ async def football_menu_inline_callback(callback: CallbackQuery):
     user = db.get_user(callback.from_user.id)
     text = (
         "⚽ <b>Игра ФУТБОЛ</b> ⚽\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "ㅤ\n\n"
         "Предскажите, попадет ли мяч в ворота или пролетит мимо, чтобы получить выигрыш!\n\n"
         "✍ <b>Для запуска игры напишите в чат:</b> \n"
         "<code>футбол &lt;ставка&gt; гол</code> или <code>футбол &lt;ставка&gt; мимо</code>\n"

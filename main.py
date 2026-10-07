@@ -2012,7 +2012,7 @@ async def main():
         star_router,
         mines_router, crash_router, dice_router, darts_router, profile_router, 
         slots_router, admin_router, coin_router, bonus_router, basketball_router, 
-        bank_router, cheques_router, tower_router, frog_router, exchange_router, 
+        bank_router, cheques_router, tower_router, frog_router,
         ref_router, sharik_router, hypercar_router, smart_router, tournament_router,
         stairs_router, ochko_router, roulette_router, duels_router, heist_router, artifact_router,
         market_router, p2p_nft_router, rules_router, gold_router, diamond_router, promote_router, 

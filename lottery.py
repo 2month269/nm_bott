@@ -111,7 +111,7 @@ async def lottery_start_cmd(message: Message, state: FSMContext, bot: Bot):
     # 1. Проверка на работу в группах
     if message.chat.type in ["group", "supergroup"]:
         bot_info = await bot.get_me()
-        bot_url = f"https://t.me/{bot_info.username}?lottery=lottery"
+        bot_url = f"https://t.me/{bot_info.username}?start=lottery"
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="💬 Перейти в бота", url=bot_url)]

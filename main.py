@@ -1,4 +1,5 @@
 # main.py
+import uvloop
 import os
 import html
 import time

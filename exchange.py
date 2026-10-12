@@ -1115,7 +1115,7 @@ async def withdraw_menu(callback: CallbackQuery):
         [InlineKeyboardButton(text=f"💎 Вывод {CURRENCY_NAME} в кошелек", callback_data="ex_wd_nmp", style="primary")],
         [InlineKeyboardButton(text="⬅️ назад в панель", callback_data="ex_control_panel", style="primary")]
     ])
-    await safe_edit_message(callback.message, f"{PE_OUTBOX} <b>Выберите валюту для вывода:&lt;/b&gt;", reply_markup=kb)
+    await safe_edit_message(callback.message, f"{PE_OUTBOX} <b>Выберите валюту для вывода:</b>", reply_markup=kb)
 
 @router.callback_query(F.data == "ex_wd_ncoin")
 async def wd_ncoin_start(callback: CallbackQuery, state: FSMContext):

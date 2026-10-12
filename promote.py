@@ -502,10 +502,10 @@ async def promote_main_cmd(event, bot: Bot, state: FSMContext = None):
         [InlineKeyboardButton(text="🎯 Задания (Заработать NMP)", callback_data="promote_tasks_page:1", style="success")],
         [InlineKeyboardButton(text="🟢 Активные", callback_data="promote_active_list", style="primary")],
         [
-            InlineKeyboardButton(text="✔️ Завершённые", callback_data="promote_completed_stats", style="primary"),
+            InlineKeyboardButton(text="✔️ Завершённые", callback_data="promote_completed_stats", style="success"),
             InlineKeyboardButton(text="📕 ПРАВИЛА ❗️", callback_data="promote_rules", style="danger")
         ],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_start", style="primary")]
+        [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_start", style="danger")]
     ])
 
     if isinstance(event, Message):

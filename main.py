@@ -1064,22 +1064,32 @@ async def game_cmd(message: Message, state: FSMContext):
     await message.answer(text, reply_markup=get_games_keyboard_page1(), parse_mode="Markdown")
 
 
-# --- СТАРТ И ОБРАБОТКА РЕФЕРАЛОВ / ЧЕКОВ ---
+
+# --- СТАРТ И ОБРАБОТКА РЕФЕРАЛОВ / ЧЕКОВ / ОБМЕННИКА ---
 @router.message(CommandStart())
 async def start_cmd(message: Message, command: CommandObject, state: FSMContext, bot: Bot):
     await state.clear()
     user_id = message.from_user.id
 
+    # 1. Сначала регистрируем / обновляем пользователя в БД
+    db.get_user(user_id, message.from_user.first_name, message.from_user.username)
+
     args = command.args
     if args:
-        if args.startswith("ref_"):
+        args_clean = args.strip()
+        
+        # Переход в P2P-обменник из чата (/start exchange)
+        if args_clean == "exchange":
+            from exchange import show_exchange_main
+            await show_exchange_main(message, state)
+            return
+
+        if args_clean.startswith("ref_"):
             try:
-                ref_id = int(args.split("_")[1])
+                ref_id = int(args_clean.split("_")[1])
                 if ref_id != user_id:
                     user_before = db.get_user(user_id)
                     if not user_before.get("referrer_id"):
-                        db.get_user(user_id, message.from_user.first_name, message.from_user.username)
-                        
                         conn = db.get_conn()
                         cursor = conn.cursor()
                         cursor.execute(
@@ -1102,8 +1112,8 @@ async def start_cmd(message: Message, command: CommandObject, state: FSMContext,
             except Exception as e:
                 logger.error(f"Ошибка при обработке реферальной ссылки: {e}")
             
-        elif args.startswith("c_"):
-            cheque_id = args[2:]
+        elif args_clean.startswith("c_"):
+            cheque_id = args_clean[2:]
             
             cheque = db.get_cheque(cheque_id)
             if not cheque:

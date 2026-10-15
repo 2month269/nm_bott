@@ -150,28 +150,28 @@ def parse_bet_choice(choice_str: str):
                 pass
 
     # ВАРИАНТ 2: Одиночные стандарты
-    if choice in ["к", "красное", "крас", "red"]:
+    if choice in ["к", "красное", "крас", "red", "красный"]:
         return EMOJI_RED, lambda n: n in RED_NUMBERS, 1.97
 
-    if choice in ["ч", "черное", "чёрное", "черн", "black"]:
+    if choice in ["ч", "черное", "чёрное", "черн", "black", "черный", "чёрный"]:
         return EMOJI_BLACK, lambda n: n in BLACK_NUMBERS, 1.97
 
     if choice in ["0", "зеро", "зиро", "zero"]:
         return f"0 {EMOJI_GREEN}", lambda n: n == 0, 35.0
 
-    if choice in ["чет", "четное", "чётное", "even"]:
+    if choice in ["чет", "четное", "чётное", "even", "чёт"]:
         return "Чётное 🔢", lambda n: n != 0 and n % 2 == 0, 1.97
 
-    if choice in ["нечет", "нечетное", "нечётное", "odd"]:
+    if choice in ["нечет", "нечетное", "нечётное", "odd", "нечёт"]:
         return "Нечётное 🔢", lambda n: n % 2 != 0, 1.97
 
-    if choice in ["малые", "1-18", "small"]:
+    if choice in ["малые", "1-18", "small", "меньше", "м"]:
         return "1-18 🔲", lambda n: 1 <= n <= 18, 1.97
 
-    if choice in ["большие", "19-36", "big"]:
+    if choice in ["большие", "19-36", "big", " больше", "б"]:
         return "19-36 🔲", lambda n: 19 <= n <= 36, 1.97
 
-    if choice in ["1ряд", "1 ряд", "row1"]:
+    if choice in ["1ряд", "1 ряд", "row1", "ряд1", "ряд 1"]:
         return "1-й ряд 🧱", lambda n: n != 0 and n % 3 == 1, 2.95
 
     if choice in ["2ряд", "2 ряд", "row2"]:

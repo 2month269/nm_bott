@@ -230,7 +230,6 @@ def get_finished_darts_kb(fair_id: str) -> InlineKeyboardMarkup:
     """Кнопки в конце игры: 🔄 Повторить и 🔑 Честность"""
     return InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="🔄 Повторить", callback_data=f"darts_repeat:{fair_id}", style="primary"),
             InlineKeyboardButton(text="🔑 Честность", callback_data=f"darts_fair:{fair_id}", style="primary")
         ]
     ])

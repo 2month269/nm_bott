@@ -134,7 +134,7 @@ class BlockAndFsmBypassMiddleware(BaseMiddleware):
         state = data.get("state")
         
         if user:
-            if db.is_user_blocked(user.id):
+            if await is_blocked_cached(user.id):
                 if isinstance(event, Message):
                     await event.answer(f"{EMOJI_KRES} <b>Ваш аккаунт заблокирован администрацией!</b>", parse_mode="HTML")
                 elif isinstance(event, CallbackQuery):

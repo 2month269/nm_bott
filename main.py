@@ -54,6 +54,33 @@ from star_game import router as star_router # Игра "Звездная Баш�
 from pvp_mines import router as pvp_mines_router #в чате игра
 from donate import router as donate_router
 
+router = Router()
+
+# Выполнение синхронных функций БД в отдельном потоке
+async def db_call(func, *args, **kwargs):
+    return await asyncio.to_thread(func, *args, **kwargs)
+
+
+# Кэш блокировок пользователей
+blocked_cache = {}
+BLOCK_CACHE_TTL = 30
+
+
+async def is_blocked_cached(user_id: int) -> bool:
+    now = time.monotonic()
+    cached = blocked_cache.get(user_id)
+
+    if cached and now - cached["time"] < BLOCK_CACHE_TTL:
+        return cached["value"]
+
+    value = await db_call(db.is_user_blocked, user_id)
+
+    blocked_cache[user_id] = {
+        "value": value,
+        "time": now
+    }
+    return value
+
 import db          # Модуль для работы с базой данных
 import utils       # Модуль вспомогательных утилит
 
@@ -225,9 +252,12 @@ def format_apostrophe(val: float) -> str:
 async def show_balance(message: Message, state: FSMContext):
     await state.clear()
     user_id = message.from_user.id
-    user_data = db.get_user(user_id) or {}
-    
-    equipped_nft = db.get_equipped_nft(user_id)
+    user_data, equipped_nft = await asyncio.gather(
+    db_call(db.get_user, user_id),
+    db_call(db.get_equipped_nft, user_id)
+)
+
+user_data = user_data or {}
     
     balance_str = format_apostrophe(user_data.get("balance", 0))
     games_played = user_data.get("games_played", 0)
@@ -298,10 +328,13 @@ async def show_point(message: Message, state: FSMContext):
 async def show_profile(message: Message, state: FSMContext):
     await state.clear()
     user_id = message.from_user.id
-    user = db.get_user(user_id) or {}
-    rank = db.get_user_rank(user_id)
-    
-    equipped_nft = db.get_equipped_nft(user_id)
+    user, rank, equipped_nft = await asyncio.gather(
+    db_call(db.get_user, user_id),
+    db_call(db.get_user_rank, user_id),
+    db_call(db.get_equipped_nft, user_id)
+)
+
+user = user or {}
     
     profile_photo_url = "https://i.ibb.co/p6kZ2PNh/IMG-20260822-175450-939.jpg"
     if equipped_nft:
@@ -381,7 +414,11 @@ async def show_games_log_callback(callback: CallbackQuery):
     user_id = callback.from_user.id
 
     try:
-        history = db.get_user_game_history(user_id, hours=48)
+        history = await db_call(
+    db.get_user_game_history,
+    user_id,
+    hours=48
+)
     except Exception as e:
         logger.error(f"Ошибка загрузки истории игр: {e}")
         history = []
@@ -426,7 +463,11 @@ async def show_stats_summary_callback(callback: CallbackQuery):
     user_id = callback.from_user.id
 
     try:
-        stats = db.get_user_game_percentages(user_id, 48)
+        stats = await db_call(
+    db.get_user_game_percentages,
+    user_id,
+    48
+)
 
         total = int(stats.get("total", 0))
         wins = int(stats.get("wins", 0))
@@ -1663,7 +1704,7 @@ async def games_page6_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "pyramid_menu_inline")
 async def pyramid_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "🔺 <b>Игра ПИРАМИДА</b> 🔺\n"
         "ㅤ\n\n"
@@ -1678,7 +1719,7 @@ async def pyramid_menu_inline_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "diamond_menu_inline")
 async def diamond_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "💎 <b>Игра АЛМАЗЫ</b> 💎\n"
         "ㅤ\n\n"
@@ -1696,7 +1737,7 @@ async def diamond_menu_inline_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "mine_menu")
 async def mine_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "💣 <b>Игра МИНЫ</b> 💣\n"
         "ㅤ\n\n"
@@ -1711,7 +1752,7 @@ async def mine_menu_inline_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "stairs_menu_inline")
 async def stairs_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "🪜 <b>Игра ЛЕСЕНКА</b> 🪜\n"
         "ㅤ\n\n"
@@ -1730,12 +1771,12 @@ async def stairs_menu_inline_callback(callback: CallbackQuery):
 async def stairs_menu_launch_callback(call: CallbackQuery, state: FSMContext):
     await state.clear()
     
-    user = db.get_user(
-        user_id=call.from_user.id,
-        first_name=call.from_user.first_name,
-        username=call.from_user.username
-    )
-
+   user = await db_call(
+    db.get_user,
+    call.from_user.id,
+    call.from_user.first_name,
+    call.from_user.username
+)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="10к n¢", callback_data="stairs_preset:10k"),
@@ -1762,7 +1803,7 @@ async def stairs_menu_launch_callback(call: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "heist_menu_inline")
 async def heist_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "🕵️‍♂️ <b>Игра ОГРАБЛЕНИЕ БАНКА</b> 🕵️‍♂️\n"
         "ㅤ\n\n"
@@ -1782,12 +1823,12 @@ async def heist_menu_inline_callback(callback: CallbackQuery):
 async def heist_menu_launch_callback(call: CallbackQuery, state: FSMContext):
     await state.clear()
     
-    user = db.get_user(
-        user_id=call.from_user.id,
-        first_name=call.from_user.first_name,
-        username=call.from_user.username
-    )
-
+   user = await db_call(
+    db.get_user,
+    call.from_user.id,
+    call.from_user.first_name,
+    call.from_user.username
+)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="10к n¢", callback_data="heist_preset:10k"),
@@ -1827,7 +1868,7 @@ async def heist_menu_launch_callback(call: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "artifact_menu_inline")
 async def artifact_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     user_nmp = user.get("nmp_balance", 0)
     text = (
         "🏺 <b>Поход за Древним Артефактом</b> 🏺\n"
@@ -1849,11 +1890,12 @@ async def artifact_menu_inline_callback(callback: CallbackQuery):
 async def artifact_menu_launch_callback(call: CallbackQuery, state: FSMContext):
     await state.clear()
     
-    user = db.get_user(
-        user_id=call.from_user.id,
-        first_name=call.from_user.first_name,
-        username=call.from_user.username
-    )
+   user = await db_call(
+    db.get_user,
+    call.from_user.id,
+    call.from_user.first_name,
+    call.from_user.username
+)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -1895,7 +1937,7 @@ async def artifact_menu_launch_callback(call: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "sharik_menu_inline")
 async def sharik_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "🔮 <b>Игра ШАРИК</b> 🔮\n"
         "ㅤ\n\n"
@@ -1910,7 +1952,7 @@ async def sharik_menu_inline_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "hypercar_menu_inline")
 async def hypercar_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "🏎 <b>Игра ГИПЕРКАР</b> 🏎\n"
         "ㅤ\n\n"
@@ -1926,7 +1968,7 @@ async def hypercar_menu_inline_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "smart_menu_inline")
 async def smart_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "📺 <b>Игра ВСЕЗНАЙКА</b> 📺\n"
         "ㅤ\n\n"
@@ -1943,7 +1985,7 @@ async def smart_menu_inline_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "duel_menu_inline")
 async def duel_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "⚔️ <b>P2P КИБЕР-ДУЭЛИ</b> ⚔️\n"
         "ㅤ\n\n"
@@ -1961,7 +2003,7 @@ async def duel_menu_inline_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "gold_menu_inline")
 async def gold_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "🌼 <b>Игра ЗОЛОТО</b> 🌼\n"
         "ㅤ\n\n"
@@ -1976,7 +2018,7 @@ async def gold_menu_inline_callback(callback: CallbackQuery):
 @router.callback_query(F.data == "football_menu_inline")
 async def football_menu_inline_callback(callback: CallbackQuery):
     await callback.answer()
-    user = db.get_user(callback.from_user.id)
+    user = await db_call(db.get_user, callback.from_user.id)
     text = (
         "⚽ <b>Игра ФУТБОЛ</b> ⚽\n"
         "ㅤ\n\n"
@@ -2010,8 +2052,8 @@ async def back_to_start(callback: CallbackQuery):
 
 
 async def main():
-    db.init_db()
-    init_syndicate_db()
+    await db_call(db.init_db)
+    await db_call(init_syndicate_db)
     dp.message.outer_middleware(BlockAndFsmBypassMiddleware())
     dp.callback_query.outer_middleware(BlockAndFsmBypassMiddleware())
     
